@@ -45,6 +45,43 @@ The runtime JSON Schemas for intent selection and intent execution are maintaine
 
 Example: <http://localhost:8080/api/products?category=coffee-gear&q=brew&sort=name&direction=desc>
 
+## AI agentic behavior
+
+The command bar is a small agentic interaction loop: the user describes an outcome, the model selects the catalog capability that should handle it, and the browser performs the returned operation. The model does not directly manipulate the DOM or database.
+
+```text
+user prompt
+    -> intent-selection call (all supported intents)
+    -> selected intent
+    -> intent-execution call (intent-specific parameters)
+    -> validated JSON response
+    -> frontend applyIntent(...)
+    -> catalog API request and UI update
+```
+
+The backend uses two chained calls to the local Ollama `llama3.1:8b` model:
+
+1. **Intent routing** — `AiIntentService` sends the complete list of supported intents and asks the model to select exactly one. No parameters are extracted in this step.
+2. **Intent execution** — the backend builds a second prompt for the selected intent and asks the model to return only that intent's parameters. For category filtering, the current category slugs are supplied as an allow-list, so the model cannot invent a category value.
+3. **Structured response** — `OllamaChatOptions.outputSchema(...)` applies the corresponding JSON Schema from `intent-base.json` to both calls. The service parses the JSON, normalizes unsupported values to `unknown`, and returns `{intent, parameters, response}`.
+4. **Deterministic UI action** — `command.js` maps the returned intent to a known browser operation. It updates the existing filters and calls the normal product API; the model never constructs an arbitrary URL or executes JavaScript.
+
+Supported intents are `list_products`, `filter_by_category`, `search_products`, `sort_products`, `next_page`, `previous_page`, `reset_filters`, `general_ai_question`, and `unknown`. Catalog intents return parameters for the UI. A `general_ai_question` returns a short answer in `response` without changing the catalog.
+
+For example, a request such as `{"prompt":"I want something to read"}` can produce:
+
+```json
+{
+  "intent": "filter_by_category",
+  "parameters": {"categorySlug": "books"},
+  "response": null
+}
+```
+
+This proof of concept demonstrates intent-driven application control rather than a fully autonomous agent: the allowed capabilities, parameter schemas, and browser-side effects remain explicit and auditable. The model supplies interpretation; application code owns validation and execution.
+
+Every model request and response is written to `logs/ai-intent.log` with its stage (`intent-selection` or `intent-execution:<intent>`). The log file is local runtime output and is excluded from Git commits.
+
 The frontend is served by `GET /`. Thymeleaf only resolves the page and asset paths; it does not render product rows. The catalog starts empty until the user chooses a category, searches, changes a sort, or uses the command bar.
 
 AI request and response logs are written to `logs/ai-intent.log` by default. Set `AI_LOG_FILE` to use a different file path. The AI service logger is separated from the console logger, so these entries are not printed to the console.
