@@ -4,7 +4,16 @@ A small Spring Boot catalog with a PostgreSQL backend, a Thymeleaf page shell, a
 
 ## Run on Windows (PowerShell)
 
-Requires Java 17+, Maven, and a running PostgreSQL server. From the project folder, create the database once. Enter your PostgreSQL `postgres` user's password when prompted:
+Requires Java 17+, Maven, and a running PostgreSQL server. The AI command bar also requires Ollama with the `llama3.1:8b` model installed and running locally:
+
+```powershell
+ollama pull llama3.1:8b
+ollama serve
+```
+
+Run `ollama serve` only if Ollama is not already running, and keep it running in a separate terminal. The default Ollama address is `http://localhost:11434`; set `OLLAMA_BASE_URL` before starting the application to override it. Manual catalog controls use the catalog APIs without calling Ollama.
+
+From the project folder, create the database once. Enter your PostgreSQL `postgres` user's password when prompted:
 
 ```powershell
 cd 'C:\Users\HP\Desktop\Projects\agentic web'
@@ -24,7 +33,7 @@ Open <http://localhost:8080/>. Stop the server with `Ctrl+C`. The server creates
 
 If `psql.exe` is installed elsewhere, replace its path in the first command. On other systems, run the equivalent `psql -h localhost -U postgres -d postgres -c 'CREATE DATABASE product_catalog;'` command.
 
-## Read API
+## APIs
 
 - `GET /api/categories` — all 50 categories, sorted by name; each has `slug` and `name`.
 - `GET /api/products` — paginated products with `id`, `name`, `description`, `category`, and `keywords`. Query parameters:
@@ -54,19 +63,31 @@ user prompt
     -> intent-selection call (all supported intents)
     -> selected intent
     -> intent-execution call (intent-specific parameters)
-    -> validated JSON response
+    -> parsed JSON result {intent, parameters, response}
     -> frontend applyIntent(...)
-    -> catalog API request and UI update
+    -> catalog API request and UI update for catalog actions
 ```
 
 The backend uses two chained calls to the local Ollama `llama3.1:8b` model:
 
 1. **Intent routing** — `AiIntentService` sends the complete list of supported intents and asks the model to select exactly one. No parameters are extracted in this step.
-2. **Intent execution** — the backend builds a second prompt for the selected intent and asks the model to return only that intent's parameters. For category filtering, the current category slugs are supplied as an allow-list, so the model cannot invent a category value.
-3. **Structured response** — `OllamaChatOptions.outputSchema(...)` applies the corresponding JSON Schema from `intent-base.json` to both calls. The service parses the JSON, normalizes unsupported values to `unknown`, and returns `{intent, parameters, response}`.
-4. **Deterministic UI action** — `command.js` maps the returned intent to a known browser operation. It updates the existing filters and calls the normal product API; the model never constructs an arbitrary URL or executes JavaScript.
+2. **Parameter extraction or answer generation** — the backend builds a second prompt for the selected intent. Catalog actions return parameters; general questions return a question parameter and an answer. For category filtering, category names and slugs are read from PostgreSQL and included in the prompt, and the schema's category enum is populated with those slugs.
+3. **Structured response** — `OllamaChatOptions.outputSchema(...)` supplies a JSON Schema from `intent-base.json` on each call to constrain model generation. The backend parses the result, maps unsupported intent names to `unknown`, and returns `{intent, parameters, response}`. It does not run a separate JSON Schema validator on the returned parameters. Empty or invalid JSON responses raise an error.
+4. **UI execution** — `command.js` dispatches the returned intent to a predefined browser operation. It checks category existence, search input, sort values, and pagination button state before applying those actions. Filter changes trigger the normal product API. The model supplies intent and parameter data; application code performs the operation.
 
-Supported intents are `list_products`, `filter_by_category`, `search_products`, `sort_products`, `next_page`, `previous_page`, `reset_filters`, `general_ai_question`, and `unknown`. Catalog intents return parameters for the UI. A `general_ai_question` returns a short answer in `response` without changing the catalog.
+The supported capabilities and their UI effects are:
+
+| Intent | Parameters | Frontend effect |
+| --- | --- | --- |
+| `list_products` | `{}` | Clear category/search, reset sort to name ascending, and load page 1. |
+| `filter_by_category` | `categorySlug` | Apply one existing category and load page 1, preserving search and sort. |
+| `search_products` | `keywordQuery` | Set search text (up to 100 characters) and load page 1, preserving category and sort. |
+| `sort_products` | `sortField`, `sortDirection` | Sort by `name` or `category`, with `asc` or `desc`, and load page 1. |
+| `next_page` | `pageDirection: "next"` | Trigger next-page navigation when its button is enabled. |
+| `previous_page` | `pageDirection: "previous"` | Trigger previous-page navigation when its button is enabled. |
+| `reset_filters` | `{}` | Clear category/search, reset sort, and load page 1. |
+| `general_ai_question` | `question` | Log the returned `response` in the browser console; leave catalog controls unchanged. |
+| `unknown` | `{}` | Show feedback that no catalog action was identified. |
 
 For example, a request such as `{"prompt":"I want something to read"}` can produce:
 
@@ -78,24 +99,26 @@ For example, a request such as `{"prompt":"I want something to read"}` can produ
 }
 ```
 
-This proof of concept demonstrates intent-driven application control rather than a fully autonomous agent: the allowed capabilities, parameter schemas, and browser-side effects remain explicit and auditable. The model supplies interpretation; application code owns validation and execution.
+This proof of concept explores using AI as a virtual user: someone expresses a need in their own words, the model selects an available capability and its parameters, and the application carries it out. The backend orchestrates a fixed two-call workflow, with one selected intent per submission.
 
-Every model request and response is written to `logs/ai-intent.log` with its stage (`intent-selection` or `intent-execution:<intent>`). The log file is local runtime output and is excluded from Git commits.
+### Current limits
+
+- Each submission selects exactly one intent. A combined request such as "show coffee gear sorted Z to A" does not produce both filtering and sorting actions. Submit a category request and then a separate sorting request; the UI preserves existing filters where described above.
+- The frontend sends only the current user prompt to the backend. The backend adds intent instructions and, for category filtering, available categories. There is no conversation memory, and current UI filters, page number, and total pages are not sent to the model. The `inputFormat.context` structure in `intent-base.json` describes context that is not currently wired into the endpoint.
+- The runtime reads the `schemas` section of `intent-base.json`. The intent allow-list, routing prompt, and per-intent prompts are maintained in `AiIntentService.java`; adding an intent also requires backend and frontend dispatcher changes.
+- JSON Schema constrains the output structure and allowed values supplied to Ollama. It does not establish that the model interpreted the user's meaning correctly. Backend parameter validation is limited as described above.
+- There is no automatic retry, clarification conversation, or follow-up model call to check whether the UI action succeeded. General answers receive no product records and are printed to the browser console.
+
+### Logging
+
+The service writes each constructed prompt and returned response text to `logs/ai-intent.log`, labelled `intent-selection` or `intent-execution:<intent>`. The output schema, model options, and full Ollama HTTP payload are not logged. A failed call may have a request entry without a response entry.
+
+Set `AI_LOG_FILE` to change the active log file path. The AI service logger writes these entries to the file only. The default `logs/` directory is excluded from Git commits.
 
 The frontend is served by `GET /`. Thymeleaf only resolves the page and asset paths; it does not render product rows. The catalog starts empty until the user chooses a category, searches, changes a sort, or uses the command bar.
 
-AI request and response logs are written to `logs/ai-intent.log` by default. Set `AI_LOG_FILE` to use a different file path. The AI service logger is separated from the console logger, so these entries are not printed to the console.
-
 ## Bottom command bar
 
-The command bar stays fixed at the bottom of the page and sends natural-language requests to `POST /api/ai/prompt`. The backend selects one supported intent, extracts its parameters in a second structured-output call, and returns that result to the browser. The frontend applies the returned intent to the catalog; the submit button is disabled and shows a spinner while the operation is running.
+The command bar stays fixed at the bottom of the page. Every nonempty submission is sent to `POST /api/ai/prompt` for model interpretation. The input and submit button are disabled and the button shows a spinner until that AI request completes or fails. Product fetching and rendering happen separately; the busy indicator does not currently wait for them to finish.
 
-The following are illustrative natural-language prompts, not a fixed command vocabulary or client-side phrase rules. Any prompt is sent to the model for intent selection:
-
-- `show wireless headphones` — search products
-- `show coffee gear` — filter by category
-- `show coffee gear sorted Z to A` — filter and sort
-- `sort by category` — change ordering
-- `next page` or `previous page` — navigate results
-- `show all products` — list products and clear filters
-- `clear filters` — reset the catalog view
+Users can describe needs naturally, for example "I want something to read" or "I want to start cycling." These are illustrative inputs for the model, not required phrases or a command vocabulary. The selected intent determines the single operation applied by the UI.
