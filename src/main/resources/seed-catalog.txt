@@ -1,0 +1,51 @@
+# Category|use case|search keywords|six unique product names
+Smartphones|calls, photos, and daily apps|phone mobile handset|Aster Nova Phone,Aster Mini Phone,Orion Pro Phone,Orion Lite Phone,Solstice 5G Phone,Willow Compact Phone
+Laptops|work, study, and travel|computer notebook portable|Atlas Air Laptop,Atlas Studio Laptop,Cedar Work Laptop,Cedar Travel Laptop,Pixel Forge Laptop,Northstar Slim Laptop
+Tablets|reading, sketching, and entertainment|touchscreen slate digital|Mira Sketch Tablet,Mira Reader Tablet,Vela Kids Tablet,Vela Plus Tablet,Arbor Note Tablet,Orbit Media Tablet
+Monitors|clear desktop viewing|display screen desktop|Vista 24 Monitor,Vista 27 Monitor,Arc Wide Monitor,Arc Curved Monitor,Clarity 4K Monitor,Clarity Portable Monitor
+Keyboards|comfortable typing and shortcuts|typing mechanical wireless|Tactile Mini Keyboard,Tactile Pro Keyboard,Quiet Desk Keyboard,Quiet Travel Keyboard,Orbit Split Keyboard,Orbit Compact Keyboard
+Mice|precise desktop navigation|pointer ergonomic wireless|Swift Wireless Mouse,Swift Travel Mouse,Contour Ergo Mouse,Contour Vertical Mouse,Glide Gaming Mouse,Glide Silent Mouse
+Headphones|private music and calls|audio listening wireless|Echo Studio Headphones,Echo Fold Headphones,Cloud Noise Cancel Headphones,Cloud Sport Headphones,Tone Wired Headphones,Tone Kids Headphones
+Speakers|room filling music and podcasts|audio sound bluetooth|Pulse Mini Speaker,Pulse Party Speaker,Harbor Bookshelf Speaker,Harbor Soundbar,Trail Waterproof Speaker,Trail Clip Speaker
+Cameras|photos and video projects|photo video digital|Lumen Mirrorless Camera,Lumen Pocket Camera,Focus Action Camera,Focus Vlog Camera,Frame Instant Camera,Frame Trail Camera
+Camera Accessories|carrying and supporting camera gear|photo tripod lens|Lens Guard Case,Lens Travel Pouch,Steady Carbon Tripod,Steady Mini Tripod,Flash Diffuser Kit,Camera Cleaning Kit
+Smart Watches|notifications and daily planning|wearable watch digital|Tempo Classic Watch,Tempo Sport Watch,Beacon Cellular Watch,Beacon Mini Watch,Orbit Health Watch,Orbit Trail Watch
+Fitness Trackers|logging steps and activity|wearable activity steps|Stride Band,Stride Slim Band,Motion Clip Tracker,Motion Sleep Tracker,Peak Heart Tracker,Peak Swim Tracker
+Gaming Consoles|playing games at home or away|gaming game console|Nova Home Console,Nova Pocket Console,Arcade Mini Console,Arcade Retro Console,Quest Handheld Console,Quest Family Console
+Video Games|interactive play and stories|gaming game entertainment|Skyward Quest Game,Forest Builder Game,City Racer Game,Ocean Explorer Game,Castle Puzzle Game,Galaxy Tactics Game
+Routers|connecting home and office devices|wifi network internet|Link Mesh Router,Link Travel Router,Signal Dual Band Router,Signal Home Router,Wave Gaming Router,Wave Compact Router
+Storage Drives|backing up and moving files|ssd disk backup|Vault Portable SSD,Vault Desktop Drive,Swift USB Drive,Swift Secure Drive,Archive Backup Drive,Archive Pocket SSD
+Printers|documents and creative prints|paper ink print|Page Home Printer,Page Office Printer,Color Craft Printer,Color Photo Printer,Label Maker Printer,Label Shipping Printer
+Office Supplies|organizing paperwork and workspaces|desk paper organize|Grid Desk Organizer,Grid File Tray,Clip Binder Set,Clip Document Folder,Focus Weekly Planner,Focus Sticky Note Pack
+Desks|working and studying comfortably|furniture table workspace|Harbor Writing Desk,Harbor Corner Desk,Elevate Standing Desk,Elevate Compact Desk,Oakline Study Desk,Oakline Foldable Desk
+Office Chairs|supported seating at a desk|seating ergonomic furniture|Balance Task Chair,Balance Mesh Chair,Forma Executive Chair,Forma Compact Chair,Cloud Lumbar Chair,Cloud Drafting Chair
+Lighting|lighting rooms and task areas|lamp light fixture|Glow Reading Lamp,Glow Desk Lamp,Arc Floor Lamp,Arc Pendant Light,Beam Bedside Lamp,Beam Outdoor Lantern
+Home Decor|adding personality to living spaces|interior decorative home|Woven Wall Hanging,Stoneware Bud Vase,Round Accent Mirror,Oak Picture Frame,Linen Cushion Cover,Brass Table Clock
+Kitchen Appliances|preparing everyday meals|kitchen electric cooking|Blend Personal Blender,Blend Family Blender,Crisp Air Fryer,Crisp Toaster Oven,Steam Rice Cooker,Chop Food Processor
+Cookware|cooking on the stove or in the oven|pan pot kitchen|Forge Skillet,Forge Saucepan,Simmer Dutch Oven,Simmer Stock Pot,Terra Baking Dish,Terra Grill Pan
+Tableware|serving daily meals|dining plate bowl|Sage Dinner Plate Set,Sage Pasta Bowl Set,Clear Water Glass Set,Clear Juice Glass Set,Oak Serving Board,Ceramic Mug Set
+Coffee Gear|brewing and serving coffee|coffee brew espresso|Morning French Press,Morning Pour Over Kit,Barista Espresso Tamper,Barista Milk Pitcher,Roast Burr Grinder,Roast Travel Tumbler
+Bedding|comfortable sleep and bedroom setup|bed sleep linen|Cloud Cotton Sheet Set,Cloud Linen Duvet Cover,Rest Memory Pillow,Rest Cooling Pillow,Cozy Weighted Blanket,Cozy Throw Blanket
+Bath Essentials|daily bathroom comfort|bath towel shower|Pure Bath Towel Set,Pure Hand Towel Set,River Shower Caddy,River Bath Mat,Soft Cotton Robe,Soft Washcloth Pack
+Cleaning Supplies|tidying home surfaces|clean mop brush|Sweep Microfiber Mop,Sweep Dustpan Set,Scrub Bottle Brush,Scrub Tile Brush,Clear Glass Cloth Pack,Clear Reusable Spray Bottle
+Air Care|improving indoor air comfort|air purifier humidifier|Breathe Room Purifier,Breathe Desk Purifier,Mist Cool Humidifier,Mist Warm Humidifier,Breeze Tower Fan,Breeze Air Circulator
+Garden Tools|planting and tending outdoor spaces|garden soil pruning|Grow Hand Trowel,Grow Pruning Shears,Green Watering Can,Green Garden Hose,Root Soil Scoop,Root Weeding Fork
+Plants|bringing greenery indoors and outdoors|plant greenery botanical|Monstera Potted Plant,Snake Potted Plant,Peace Lily Plant,Rubber Tree Plant,Basil Herb Plant,Succulent Trio Plant
+Outdoor Furniture|relaxing on a patio or balcony|patio garden furniture|Terrace Lounge Chair,Terrace Dining Chair,Garden Bistro Table,Garden Storage Bench,Shade Patio Umbrella,Shade Folding Lounger
+Camping Gear|sleeping and cooking outdoors|camp outdoor tent|Trail Two Person Tent,Trail Family Tent,Camp Sleeping Bag,Camp Folding Stove,Peak Camping Lantern,Peak Folding Cot
+Hiking Gear|walking trails and carrying essentials|hike trail outdoor|Summit Daypack,Summit Trekking Poles,Path Hydration Pack,Path Trail Gaiters,Ridge Compass,Ridge Rain Cover
+Bicycles|commuting and recreational riding|bike cycle riding|Metro City Bicycle,Metro Folding Bicycle,Trail Mountain Bicycle,Trail Junior Bicycle,Swift Road Bicycle,Swift Hybrid Bicycle
+Cycling Accessories|safer and easier bike rides|bike helmet cycling|Ride Urban Helmet,Ride Youth Helmet,Glow Bike Light Set,Glow Reflective Vest,Carry Saddle Bag,Carry Bottle Cage
+Fitness Equipment|strength and cardio workouts|exercise gym workout|Lift Adjustable Dumbbell,Lift Kettlebell,Core Resistance Band Set,Core Jump Rope,Stride Exercise Bike,Stride Step Platform
+Yoga Gear|stretching and mindful movement|yoga stretch fitness|Flow Yoga Mat,Flow Travel Mat,Calm Yoga Block Set,Calm Meditation Cushion,Flex Stretch Strap,Flex Bolster Pillow
+Sports Balls|practice and recreational games|sport ball training|Match Soccer Ball,Match Basketball,Court Volleyball,Court Tennis Ball Pack,Field Cricket Ball,Field Rugby Ball
+Books|reading fiction and nonfiction|read literature paperback|The Quiet Harbor Novel,The Mountain Atlas Guide,Everyday Astronomy Book,The Garden Notebook,Stories of the Sea Book,Modern Cooking Basics Book
+Stationery|writing notes and planning|pen notebook paper|Daily Grid Notebook,Daily Pocket Journal,Ink Gel Pen Set,Ink Fountain Pen,Plan Index Card Pack,Plan Desk Calendar
+Art Supplies|drawing, painting, and crafts|paint sketch creative|Color Watercolor Set,Color Acrylic Paint Set,Sketch Pencil Kit,Sketch Mixed Media Pad,Studio Brush Roll,Studio Canvas Pack
+Musical Instruments|learning and making music|music instrument sound|Melody Acoustic Guitar,Melody Ukulele,Tempo Digital Keyboard,Tempo Practice Drum,Note Recorder Flute,Note Harmonica
+Pet Supplies|care and play for household pets|pet dog cat|Paw Ceramic Food Bowl,Paw Travel Water Bowl,Whisker Cat Toy Set,Whisker Scratching Pad,Tail Dog Leash,Tail Washable Bed
+Baby Gear|daily care for infants|baby infant nursery|Nest Stroller,Nest Baby Carrier,Little Feeding Bottle Set,Little Changing Mat,Cloud Crib Mobile,Cloud Nursery Monitor
+Toys|imaginative play and learning|kids play learning|Build Wooden Block Set,Build Magnetic Tiles,Wonder Puzzle Box,Wonder Science Kit,Play Plush Bear,Play Mini Train Set
+Travel Bags|packing for trips and commutes|luggage bag travel|Voyage Carry On Case,Voyage Weekender Bag,Pack Cabin Backpack,Pack Toiletry Organizer,Roam Duffel Bag,Roam Passport Wallet
+Clothing|comfortable everyday outfits|fashion wear apparel|Everyday Cotton Tee,Everyday Linen Shirt,Harbor Denim Jacket,Harbor Chino Pants,Cozy Knit Sweater,Cozy Rain Shell
+Footwear|walking, running, and casual wear|shoes boots fashion|Stride Running Shoes,Stride Walking Shoes,Harbor Canvas Sneakers,Harbor Leather Boots,Trail Hiking Boots,Trail Slip On Sandals
