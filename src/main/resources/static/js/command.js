@@ -34,7 +34,6 @@ $(function () {
                 return;
 
             case 'filter_by_category':
-            case 'category_filter':
                 const categoryOptionExists = $('#category option').toArray()
                     .some(function (option) { return option.value === values.categorySlug; });
                 if (!values.categorySlug || !categoryOptionExists) {

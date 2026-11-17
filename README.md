@@ -90,7 +90,7 @@ AI request and response logs are written to `logs/ai-intent.log` by default. Set
 
 The command bar stays fixed at the bottom of the page and sends natural-language requests to `POST /api/ai/prompt`. The backend selects one supported intent, extracts its parameters in a second structured-output call, and returns that result to the browser. The frontend applies the returned intent to the catalog; the submit button is disabled and shows a spinner while the operation is running.
 
-Supported examples include:
+The following are illustrative natural-language prompts, not a fixed command vocabulary or client-side phrase rules. Any prompt is sent to the model for intent selection:
 
 - `show wireless headphones` — search products
 - `show coffee gear` — filter by category

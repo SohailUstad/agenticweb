@@ -30,28 +30,6 @@ public class AiIntentService {
                         "general_ai_question",
                         "unknown");
 
-        // private static final String INTENT_SELECTION_PROMPT = """
-        // You are the intent router for a product catalog UI.
-        // Select exactly one intent from this complete list:
-        // - list_products: display the product catalog
-        // - filter_by_category: filter products by one available category
-        // - search_products: search by product name, description, or keywords
-        // - sort_products: sort by name or category in ascending or descending order
-        // - next_page: move to the next results page
-        // - previous_page: move to the previous results page
-        // - reset_filters: clear all product filters
-        // - general_ai_question: answer a question that does not request a catalog
-        // action
-        // - unknown: no supported intent matches
-
-        // Return JSON only in this exact shape:
-        // {"intent":"one-intent-name"}
-        // Do not return parameters in this step.
-
-        // User input:
-        // %s
-        // """;
-
         private static final String INTENT_SELECTION_PROMPT = """
                         You are an intelligent intent router for an AI-powered product catalog UI.
 
