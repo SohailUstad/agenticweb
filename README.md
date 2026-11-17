@@ -35,9 +35,19 @@ If `psql.exe` is installed elsewhere, replace its path in the first command. On 
   - `page`: zero-based page number (default `0`).
   - `size`: page size from 1 to 100 (default `12`).
 
+- `POST /api/ai/prompt` — sends a JSON prompt through Spring AI to the locally running Ollama `llama3.1:8b` model. The backend first selects one supported intent, then makes an intent-specific second call to extract parameters or answer a general question. Request: `{"prompt":"Show coffee gear"}`. Catalog response: `{"intent":"filter_by_category","parameters":{"categorySlug":"coffee-gear"},"response":null}`. General-question response includes the answer in `response`. Ollama must be running at `http://localhost:11434` (or set `OLLAMA_BASE_URL`).
+
+The runtime JSON Schemas for intent selection and intent execution are maintained in `src/main/resources/intent-base.json` and passed to Ollama for structured output enforcement.
+
+  ```powershell
+  Invoke-RestMethod -Uri 'http://localhost:8080/api/ai/prompt' -Method Post -ContentType 'application/json' -Body '{"prompt":"Say hello"}'
+  ```
+
 Example: <http://localhost:8080/api/products?category=coffee-gear&q=brew&sort=name&direction=desc>
 
 The frontend is served by `GET /`. Thymeleaf only resolves the page and asset paths; it does not render product rows.
+
+AI request and response logs are written to `logs/ai-intent.log` by default. Set `AI_LOG_FILE` to use a different file path. The AI service logger is separated from the console logger, so these entries are not printed to the console.
 
 ## Bottom command bar
 

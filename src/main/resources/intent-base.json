@@ -1,0 +1,309 @@
+{
+  "version": "1.0",
+  "inputFormat": {
+    "userInput": "string",
+    "context": {
+      "availableCategories": [
+        {
+          "slug": "string",
+          "name": "string"
+        }
+      ],
+      "availableSortFields": [
+        "name",
+        "category"
+      ],
+      "currentPage": "integer",
+      "totalPages": "integer",
+      "currentFilters": {
+        "categorySlug": "string or null",
+        "keywordQuery": "string or null",
+        "sortField": "name or category",
+        "sortDirection": "asc or desc"
+      }
+    }
+  },
+  "intentSelection": {
+    "purpose": "Select exactly one intent before extracting intent-specific parameters.",
+    "inputFormat": {
+      "userInput": "string",
+      "availableIntents": [
+        "list_products",
+        "filter_by_category",
+        "search_products",
+        "sort_products",
+        "next_page",
+        "previous_page",
+        "reset_filters",
+        "general_ai_question",
+        "unknown"
+      ]
+    },
+    "requiredOutput": {
+      "intent": "one value from inputFormat.availableIntents"
+    }
+  },
+  "intents": [
+    {
+      "name": "list_products",
+      "description": "Display the product catalog.",
+      "parametersToIdentify": {},
+      "requiredOutput": {
+        "intent": "list_products",
+        "parameters": {}
+      }
+    },
+    {
+      "name": "filter_by_category",
+      "description": "Filter products using one available category.",
+      "parametersToIdentify": {
+        "categorySlug": "string from context.availableCategories"
+      },
+      "requiredOutput": {
+        "intent": "filter_by_category",
+        "parameters": {
+          "categorySlug": "string"
+        }
+      }
+    },
+    {
+      "name": "search_products",
+      "description": "Search product names, descriptions, and keywords.",
+      "parametersToIdentify": {
+        "keywordQuery": "string"
+      },
+      "requiredOutput": {
+        "intent": "search_products",
+        "parameters": {
+          "keywordQuery": "string"
+        }
+      }
+    },
+    {
+      "name": "sort_products",
+      "description": "Sort the current product results.",
+      "parametersToIdentify": {
+        "sortField": "name or category from context.availableSortFields",
+        "sortDirection": "asc or desc"
+      },
+      "requiredOutput": {
+        "intent": "sort_products",
+        "parameters": {
+          "sortField": "name or category",
+          "sortDirection": "asc or desc"
+        }
+      }
+    },
+    {
+      "name": "next_page",
+      "description": "Move to the next product results page.",
+      "parametersToIdentify": {
+        "pageDirection": "next"
+      },
+      "requiredOutput": {
+        "intent": "next_page",
+        "parameters": {
+          "pageDirection": "next"
+        }
+      }
+    },
+    {
+      "name": "previous_page",
+      "description": "Move to the previous product results page.",
+      "parametersToIdentify": {
+        "pageDirection": "previous"
+      },
+      "requiredOutput": {
+        "intent": "previous_page",
+        "parameters": {
+          "pageDirection": "previous"
+        }
+      }
+    },
+    {
+      "name": "reset_filters",
+      "description": "Clear category, search, and sorting filters.",
+      "parametersToIdentify": {},
+      "requiredOutput": {
+        "intent": "reset_filters",
+        "parameters": {}
+      }
+    },
+    {
+      "name": "general_ai_question",
+      "description": "Answer a question that does not request a catalog action.",
+      "parametersToIdentify": {
+        "question": "string"
+      },
+      "requiredOutput": {
+        "intent": "general_ai_question",
+        "parameters": {
+          "question": "string"
+        }
+      }
+    },
+    {
+      "name": "unknown",
+      "description": "The user input does not match a supported intent.",
+      "parametersToIdentify": {},
+      "requiredOutput": {
+        "intent": "unknown",
+        "parameters": {}
+      }
+    }
+  ],
+  "outputFormat": {
+    "intent": "one supported intent name",
+    "parameters": "object containing only the parameters defined for the selected intent"
+  },
+  "schemas": {
+    "intentSelection": {
+      "type": "object",
+      "properties": {
+        "intent": {
+          "type": "string",
+          "enum": [
+            "list_products",
+            "filter_by_category",
+            "search_products",
+            "sort_products",
+            "next_page",
+            "previous_page",
+            "reset_filters",
+            "general_ai_question",
+            "unknown"
+          ]
+        }
+      },
+      "required": ["intent"],
+      "additionalProperties": false
+    },
+    "intentExecution": {
+      "list_products": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "required": ["parameters"],
+        "additionalProperties": false
+      },
+      "filter_by_category": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "categorySlug": {"type": "string"}
+            },
+            "required": ["categorySlug"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["parameters"],
+        "additionalProperties": false
+      },
+      "search_products": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "keywordQuery": {"type": "string", "minLength": 1}
+            },
+            "required": ["keywordQuery"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["parameters"],
+        "additionalProperties": false
+      },
+      "sort_products": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "sortField": {"type": "string", "enum": ["name", "category"]},
+              "sortDirection": {"type": "string", "enum": ["asc", "desc"]}
+            },
+            "required": ["sortField", "sortDirection"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["parameters"],
+        "additionalProperties": false
+      },
+      "next_page": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "pageDirection": {"type": "string", "const": "next"}
+            },
+            "required": ["pageDirection"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["parameters"],
+        "additionalProperties": false
+      },
+      "previous_page": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "pageDirection": {"type": "string", "const": "previous"}
+            },
+            "required": ["pageDirection"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["parameters"],
+        "additionalProperties": false
+      },
+      "reset_filters": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "required": ["parameters"],
+        "additionalProperties": false
+      },
+      "general_ai_question": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "question": {"type": "string", "minLength": 1}
+            },
+            "required": ["question"],
+            "additionalProperties": false
+          },
+          "response": {"type": "string"}
+        },
+        "required": ["parameters", "response"],
+        "additionalProperties": false
+      },
+      "unknown": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "required": ["parameters"],
+        "additionalProperties": false
+      }
+    }
+  }
+}

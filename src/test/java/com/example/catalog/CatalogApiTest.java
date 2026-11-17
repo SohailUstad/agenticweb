@@ -1,16 +1,19 @@
 package com.example.catalog;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.hamcrest.Matchers.containsString;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.MediaType;
 
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:catalog;MODE=PostgreSQL;DB_CLOSE_DELAY=-1",
@@ -71,5 +74,22 @@ class CatalogApiTest {
                 .andExpect(status().isOk());
         mvc.perform(get("/css/command-dock.css"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void rejectsBlankAiPrompt() throws Exception {
+        mvc.perform(post("/api/ai/prompt").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"prompt\":\"  \"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "RUN_OLLAMA_TEST", matches = "true")
+    void returnsResponseFromLocalOllama() throws Exception {
+        mvc.perform(post("/api/ai/prompt").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"prompt\":\"Reply with the word catalog.\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.intent").isNotEmpty())
+                .andExpect(jsonPath("$.parameters").exists());
     }
 }

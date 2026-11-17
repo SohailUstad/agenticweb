@@ -68,10 +68,18 @@ body {
 
 .command-form button:hover { background: #244b35; }
 .command-form button span { margin-left: 8px; }
+.command-form button:disabled { opacity: .85; cursor: wait; }
+.command-form button.is-loading { min-width: 108px; }
+.command-form button.is-loading .command-button-label,
+.command-form button.is-loading .command-button-arrow { display: none; }
+.command-spinner { display: none; width: 15px; height: 15px; margin: 0 auto !important; border: 2px solid #ffffff66; border-top-color: #fff; border-radius: 50%; animation: command-spin .7s linear infinite; }
+.command-form button.is-loading .command-spinner { display: block; }
+@keyframes command-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 600px) {
     .command-dock { padding: 9px 10px max(9px, env(safe-area-inset-bottom)); }
     .command-form { gap: 8px; padding-left: 12px; }
     .command-form button { min-width: 48px; padding: 0 12px; font-size: 0; }
     .command-form button span { margin: 0; font-size: 18px; }
+    .command-form button.is-loading { min-width: 48px; }
 }

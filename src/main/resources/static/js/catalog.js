@@ -70,5 +70,7 @@ $(function () {
     $('#category, #sort').on('change', function () { page = 0; loadProducts(); });
     $('#previous').on('click', function () { if (page > 0) { page--; loadProducts(); window.scrollTo({ top: $('.catalog-section').offset().top - 20, behavior: 'smooth' }); } });
     $('#next').on('click', function () { page++; loadProducts(); window.scrollTo({ top: $('.catalog-section').offset().top - 20, behavior: 'smooth' }); });
-    loadProducts();
+    $count.text('Ready to explore');
+    $pagination.hide();
+    showStatus('Choose a category, search for a product, or use the command bar to explore.');
 });

@@ -2,16 +2,8 @@ $(function () {
     const $form = $('#command-form');
     const $input = $('#command-input');
     const $feedback = $('#command-feedback');
+    const $submitButton = $form.find('button[type="submit"]');
     const dock = document.querySelector('.command-dock');
-
-    const categoryAliases = {
-        phones: 'smartphones', phone: 'smartphones',
-        computers: 'laptops', computer: 'laptops',
-        shoes: 'footwear', shoe: 'footwear',
-        coffee: 'coffee-gear', games: 'video-games',
-        bikes: 'bicycles', bike: 'bicycles',
-        pets: 'pet-supplies', pet: 'pet-supplies'
-    };
 
     function reserveSpace() {
         document.documentElement.style.setProperty('--command-dock-height', dock.offsetHeight + 'px');
@@ -20,76 +12,108 @@ $(function () {
     if (window.ResizeObserver) new ResizeObserver(reserveSpace).observe(dock);
     window.addEventListener('resize', reserveSpace);
 
-    function hasPhrase(text, phrase) {
-        return (' ' + text + ' ').includes(' ' + phrase + ' ');
-    }
-
-    function removePhrase(text, phrase) {
-        return (' ' + text + ' ').replace(' ' + phrase + ' ', ' ').trim();
-    }
-
     function showResults() {
         window.scrollTo({ top: $('.catalog-section').offset().top - 20, behavior: 'smooth' });
     }
 
-    function applyCommand(raw, categories) {
-        const command = raw.toLowerCase().replace(/[?!.,]/g, ' ').replace(/\s+/g, ' ').trim();
-        if (!command) return;
+    function setCommandBusy(isBusy) {
+        $submitButton.prop('disabled', isBusy).toggleClass('is-loading', isBusy).attr('aria-busy', isBusy);
+        $input.prop('disabled', isBusy);
+    }
 
-        if (/^(reset|clear filters|show all products|list all products|all products)$/.test(command)) {
-            $('#category').val('');
-            $('#search').val('');
-            $('#sort').val('name,asc').trigger('change');
-            $feedback.text('Showing all products.');
-            showResults();
-            return;
-        }
-        if (/^(next|next page)$/.test(command)) {
-            if (!$('#next').prop('disabled') && $('.pagination').is(':visible')) $('#next').trigger('click');
-            return;
-        }
-        if (/^(previous|previous page|prev|prev page)$/.test(command)) {
-            if (!$('#previous').prop('disabled') && $('.pagination').is(':visible')) $('#previous').trigger('click');
-            return;
-        }
+    function applyIntent(intent, parameters) {
+        const values = parameters || {};
 
-        const sortField = /\b(?:sort|sorted|order|ordered)\s+(?:by\s+)?categor(?:y|ies)\b/.test(command) ? 'category' : 'name';
-        const direction = /\b(?:z\s*(?:to|-)\s*a|descending|reverse)\b/.test(command) ? 'desc' : 'asc';
-        let remaining = command
-            .replace(/\b(?:sort|sorted|order|ordered)\s+(?:by\s+)?(?:name|categor(?:y|ies))\b/g, ' ')
-            .replace(/\b(?:a\s*(?:to|-)\s*z|z\s*(?:to|-)\s*a|ascending|descending|reverse|alphabetically)\b/g, ' ')
-            .replace(/\s+/g, ' ').trim();
+        switch (intent) {
+            case 'list_products':
+                $('#category').val('');
+                $('#search').val('');
+                $('#sort').val('name,asc').trigger('change');
+                $feedback.text('Showing all products.');
+                showResults();
+                return;
 
-        const category = [...categories].sort((a, b) => b.name.length - a.name.length)
-            .find(item => hasPhrase(remaining, item.name.toLowerCase()));
-        let slug = category ? category.slug : '';
-        if (category) remaining = removePhrase(remaining, category.name.toLowerCase());
-        if (!slug) {
-            for (const [alias, aliasSlug] of Object.entries(categoryAliases)) {
-                if (hasPhrase(remaining, alias)) {
-                    slug = aliasSlug;
-                    remaining = removePhrase(remaining, alias);
-                    break;
+            case 'filter_by_category':
+            case 'category_filter':
+                const categoryOptionExists = $('#category option').toArray()
+                    .some(function (option) { return option.value === values.categorySlug; });
+                if (!values.categorySlug || !categoryOptionExists) {
+                    $feedback.text('That category is not available.');
+                    return;
                 }
-            }
+                $('#category').val(values.categorySlug).trigger('change');
+                $feedback.text('Showing the selected category.');
+                showResults();
+                return;
+
+            case 'search_products':
+                if (typeof values.keywordQuery !== 'string' || !values.keywordQuery.trim()) return;
+                $('#search').val(values.keywordQuery.trim().slice(0, 100)).trigger('input');
+                $feedback.text('Searching products.');
+                showResults();
+                return;
+
+            case 'sort_products':
+                if (!['name', 'category'].includes(values.sortField)
+                    || !['asc', 'desc'].includes(values.sortDirection)) return;
+                $('#sort').val(values.sortField + ',' + values.sortDirection).trigger('change');
+                $feedback.text('Sorting products.');
+                showResults();
+                return;
+
+            case 'next_page':
+                if (values.pageDirection === 'next' && !$('#next').prop('disabled')) {
+                    $('#next').trigger('click');
+                }
+                return;
+
+            case 'previous_page':
+                if (values.pageDirection === 'previous' && !$('#previous').prop('disabled')) {
+                    $('#previous').trigger('click');
+                }
+                return;
+
+            case 'reset_filters':
+                $('#category').val('');
+                $('#search').val('');
+                $('#sort').val('name,asc').trigger('change');
+                $feedback.text('Filters cleared.');
+                showResults();
+                return;
+
+            case 'general_ai_question':
+                $feedback.text('AI response logged in the browser console.');
+                return;
+
+            case 'unknown':
+            default:
+                $feedback.text('I could not identify a catalog action for that request.');
         }
+    }
 
-        const query = remaining
-            .replace(/\b(?:show|list|find|search|display|give|me|please|products?|items?|all|the|in|from|for|with|that|are|only|of|a|an|some|and|by|sort|sorted|order|ordered|category)\b/g, ' ')
-            .replace(/\s+/g, ' ').trim().slice(0, 100);
-
-        $('#category').val(slug);
-        $('#search').val(query);
-        $('#sort').val(sortField + ',' + direction).trigger('change');
-        $feedback.text('Showing catalog results for your command.');
-        showResults();
+    function applyAiCommand(prompt) {
+        return $.ajax({
+            url: '/api/ai/prompt',
+            method: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({ prompt })
+        }).done(function (result) {
+            if (result.response) console.log('AI response:', result.response);
+            applyIntent(result.intent, result.parameters || {});
+        }).fail(function (xhr) {
+            $feedback.text('The AI command could not be processed.');
+            console.error('AI command failed:', xhr.responseJSON || xhr.statusText);
+        });
     }
 
     $form.on('submit', function (event) {
         event.preventDefault();
         const command = $input.val().trim();
         if (!command) return;
-        window.catalogCategories.done(categories => applyCommand(command, categories))
-            .fail(() => applyCommand(command, []));
+        setCommandBusy(true);
+        applyAiCommand(command).always(function () {
+            setCommandBusy(false);
+        });
     });
 });
