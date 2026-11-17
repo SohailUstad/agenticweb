@@ -45,16 +45,20 @@ The runtime JSON Schemas for intent selection and intent execution are maintaine
 
 Example: <http://localhost:8080/api/products?category=coffee-gear&q=brew&sort=name&direction=desc>
 
-The frontend is served by `GET /`. Thymeleaf only resolves the page and asset paths; it does not render product rows.
+The frontend is served by `GET /`. Thymeleaf only resolves the page and asset paths; it does not render product rows. The catalog starts empty until the user chooses a category, searches, changes a sort, or uses the command bar.
 
 AI request and response logs are written to `logs/ai-intent.log` by default. Set `AI_LOG_FILE` to use a different file path. The AI service logger is separated from the console logger, so these entries are not printed to the console.
 
 ## Bottom command bar
 
-The command bar stays fixed at the bottom of the page. It uses simple client-side phrase matching to set the existing filters; it does not call an AI service. Examples:
+The command bar stays fixed at the bottom of the page and sends natural-language requests to `POST /api/ai/prompt`. The backend selects one supported intent, extracts its parameters in a second structured-output call, and returns that result to the browser. The frontend applies the returned intent to the catalog; the submit button is disabled and shows a spinner while the operation is running.
 
-- `show wireless headphones`
-- `show coffee gear sorted Z to A`
-- `sort by category`
-- `next page` or `previous page`
-- `show all products` to clear the filters
+Supported examples include:
+
+- `show wireless headphones` — search products
+- `show coffee gear` — filter by category
+- `show coffee gear sorted Z to A` — filter and sort
+- `sort by category` — change ordering
+- `next page` or `previous page` — navigate results
+- `show all products` — list products and clear filters
+- `clear filters` — reset the catalog view
